@@ -1,39 +1,47 @@
-import './button.css';
+// components/Button.tsx
+import React from "react";
+import clsx from "clsx";
 
-export interface ButtonProps {
-  /** Is this the principal call to action on the page? */
-  primary?: boolean;
-  /** What background color to use */
-  backgroundColor?: string;
-  /** How large should the button be? */
-  size?: 'small' | 'medium' | 'large';
-  /** Button contents */
+type Props = {
   label: string;
-  /** Optional click handler */
+  loading?: boolean;
+  disabled?: boolean;
+  size?: "sm" | "md" | "lg";
+  variant?: "primary" | "secondary";
   onClick?: () => void;
-}
+};
 
-/** Primary UI component for user interaction */
 export const Button = ({
-  primary = false,
-  size = 'medium',
-  backgroundColor,
   label,
-  ...props
-}: ButtonProps) => {
-  const mode = primary ? 'storybook-button--primary' : 'storybook-button--secondary';
+  loading = false,
+  disabled = false,
+  size = "md",
+  variant = "primary",
+  onClick,
+}: Props) => {
+  const sizeClass = {
+    sm: "px-3 py-1 text-sm",
+    md: "px-4 py-2",
+    lg: "px-8 py-4 text-xl",
+  }[size];
+
+  const variantClass = {
+    primary: "bg-blue-500 hover:bg-blue-600 text-white",
+    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
+  }[variant];
+
   return (
     <button
-      type="button"
-      className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
-      {...props}
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={clsx(
+        "rounded font-medium transition",
+        sizeClass,
+        variantClass,
+        (disabled || loading) && "opacity-50 cursor-not-allowed"
+      )}
     >
-      {label}
-      <style jsx>{`
-        button {
-          background-color: ${backgroundColor};
-        }
-      `}</style>
+      {loading ? "Loading..." : label}
     </button>
   );
 };
